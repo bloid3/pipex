@@ -12,14 +12,29 @@
 
 #include "pipex.h"
 
-int	main(int argc, char *argv[], char *envp)
+int		pipex(int *fd, char **cmds, char *envp[])
 {
-	char	*cmds[2];
-	int		fd[2];
+	int		pip[2];
+	pid_t	sl1;
+	pid_t	sl2;
+	int		status;
+	int		res;
 
-	if (!envp || !*envp)
-		error("Error: Array of Pointers to Environment Variables", 1);
-	if (argc != 5)
-		error("Invalid number of arguments", 1);
-	cmds
+	res = 0;
+	pipe(pip);
+	sl1 = fork();
+	if (sl1 < 0)
+		error("ERROR Fork of slave 1", 1);
+	if (sl1 == 0)
+		
+}
+
+void	ft_sl1(int fd, char *cmd1, int pip[2], char *envp[])
+{
+	char	**cmd;
+	char	*path;
+	if (fd < 0)
+		error("ERROR Can not read the input file\n", 1);
+	dup2(pip[1], STDOUT_FILENO);
+	
 }
