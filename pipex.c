@@ -6,7 +6,7 @@
 /*   By: papereir <papereir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/10 16:23:49 by marvin            #+#    #+#             */
-/*   Updated: 2023/10/13 15:38:31 by papereir         ###   ########.fr       */
+/*   Updated: 2023/10/13 17:26:46 by papereir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ void	ft_sl2(int fd, char *cmd2, int pip[2], char *envp[])
 	dup2(fd, STDOUT_FILENO);
 	cmd = ft_split(cmd2, ' ');
 	path = get_path(cmd[0], envp);
-	printf("%s", path);
 	if (execve(path, cmd, envp) == -1)
 	{	
 		perror("Error Bad execve");
