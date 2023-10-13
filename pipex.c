@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: papereir <papereir@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/10 16:23:49 by marvin            #+#    #+#             */
-/*   Updated: 2023/10/10 16:23:49 by marvin           ###   ########.fr       */
+/*   Updated: 2023/10/13 15:38:31 by papereir         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-int		pipex(int *fd, char **cmds, char *envp[])
+int	pipex(int *fd, char **cmds, char *envp[])
 {
 	int		pip[2];
 	pid_t	sl1;
@@ -37,13 +37,14 @@ int		pipex(int *fd, char **cmds, char *envp[])
 	while (wait(&status))
 		if (WIFEXITED(status))
 			res = WIFEXITED(status);
-	return(res);		
+	return (res);
 }
 
 void	ft_sl1(int fd, char *cmd1, int pip[2], char *envp[])
 {
 	char	**cmd;
 	char	*path;
+
 	if (fd < 0)
 		error("ERROR Can not read the input file\n", 1);
 	dup2(pip[1], STDOUT_FILENO);
@@ -56,7 +57,6 @@ void	ft_sl1(int fd, char *cmd1, int pip[2], char *envp[])
 		perror("Bad execve");
 		exit(127);
 	}
-	
 }
 
 void	ft_sl2(int fd, char *cmd2, int pip[2], char *envp[])
@@ -72,7 +72,6 @@ void	ft_sl2(int fd, char *cmd2, int pip[2], char *envp[])
 	cmd = ft_split(cmd2, ' ');
 	path = get_path(cmd[0], envp);
 	printf("%s", path);
-
 	if (execve(path, cmd, envp) == -1)
 	{	
 		perror("Error Bad execve");
