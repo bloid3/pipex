@@ -12,7 +12,7 @@
 
 #include "pipex.h"
 
-static char	**ft_malloc_error(char **tab)
+char	**ft_malloc_error(char **tab)
 {
 	size_t	i;
 
@@ -26,7 +26,7 @@ static char	**ft_malloc_error(char **tab)
 	return (NULL);
 }
 
-static size_t	ft_nb_words(char const *s, char c)
+size_t	ft_nb_words(char const *s, char c)
 {
 	size_t	i;
 	size_t	nb_words;
@@ -53,7 +53,7 @@ static size_t	ft_nb_words(char const *s, char c)
 	return (nb_words);
 }
 
-static void	ft_get_next_word(char **next_word, size_t *next_word_len, char c)
+void	ft_get_next_word(char **next_word, size_t *next_word_len, char c)
 {
 	size_t	i;
 

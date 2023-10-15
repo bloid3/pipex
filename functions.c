@@ -61,3 +61,29 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	tab[i] = '\0';
 	return (tab);
 }
+
+void	ft_putstr_fd(char *s, int fd)
+{
+	if (!s)
+		return ;
+	while (*s)
+	{
+		ft_putchar_fd(*s, fd);
+		s++;
+	}
+}
+
+void	ft_putchar_fd(char c, int fd)
+{
+	write (fd, &c, 1);
+}
+
+size_t	ft_strlen(const char *s)
+{
+	size_t			i;
+
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
