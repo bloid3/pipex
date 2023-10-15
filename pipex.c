@@ -37,28 +37,29 @@ void	parent(char **argv, char **envp, int *fd)
 	close(fd[1]);
 	execute(argv[3], envp);
 }
+
 int	pipex(int *fd, char **argv, char **enpv)
 {
 	pid_t	pid1;
 	int		status;
 	int		res;
 
-	
-		if (pipe(fd) == -1)
-			error();
-		pid1 = fork();
-		if (pid1 == -1)
-			error();
-		if (pid1 == 0)
-			child(argv, enpv, fd);
-		parent(argv, enpv, fd);
-		close(fd[0]);
-		close(fd[1]);
-		while (wait(&status) > 0)
-			if (WIFEXITED(status))
-				res = WEXITSTATUS(status);
-		return (res);
+	if (pipe(fd) == -1)
+		error();
+	pid1 = fork();
+	if (pid1 == -1)
+		error();
+	if (pid1 == 0)
+		child(argv, enpv, fd);
+	parent(argv, enpv, fd);
+	close(fd[0]);
+	close(fd[1]);
+	while (wait(&status) > 0)
+		if (WIFEXITED(status))
+			res = WEXITSTATUS(status);
+	return (res);
 }
+
 int	main(int argc, char **argv, char **envp)
 {
 	int		fd[2];
