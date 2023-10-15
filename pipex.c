@@ -37,27 +37,35 @@ void	parent(char **argv, char **envp, int *fd)
 	close(fd[1]);
 	execute(argv[3], envp);
 }
-
-int	main(int argc, char **argv, char **envp)
+int	pipex(int *fd, char **argv, char **enpv)
 {
-	int		fd[2];
 	pid_t	pid1;
+	int		status;
+	int		res;
 
-	if (argc == 5)
-	{
+	
 		if (pipe(fd) == -1)
 			error();
 		pid1 = fork();
 		if (pid1 == -1)
 			error();
 		if (pid1 == 0)
-			child(argv, envp, fd);
-		waitpid(pid1, NULL, 0);
-		parent(argv, envp, fd);
-	}
-	else
-	{
-		ft_putstr_fd("Error: Bad arguments", 2);
-	}
-	return (0);
+			child(argv, enpv, fd);
+		parent(argv, enpv, fd);
+		close(fd[0]);
+		close(fd[1]);
+		while (wait(&status) > 0)
+			if (WIFEXITED(status))
+				res = WEXITSTATUS(status);
+		return (res);
+}
+int	main(int argc, char **argv, char **envp)
+{
+	int		fd[2];
+
+	if (!envp || !*envp || argc != 5)
+		error();
+	fd[0] = open(argv[1], O_RDONLY);
+	fd[1] = open(argv[4], O_CREAT | O_RDWR | O_TRUNC);
+	return (pipex(fd, argv, envp));
 }
