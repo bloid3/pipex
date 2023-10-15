@@ -24,7 +24,6 @@ void	child(char **argv, char **envp, int *fd);
 void	parent(char **argv, char **envp, int *fd);
 char	*find_path(char *cmd, char **envp);
 void	execute(char *argv, char **envp);
-int		get_next_line(char **line);
 char	*ft_strnstr(const char	*big, const char *little, size_t len);
 char	**ft_malloc_error(char **tab);
 size_t	ft_nb_words(char const *s, char c);

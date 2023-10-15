@@ -28,6 +28,7 @@ void	child(char **argv, char **envp, int *fd)
 void	parent(char **argv, char **envp, int *fd)
 {
 	int		out;
+
 	out = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (out == -1)
 		error();
