@@ -12,94 +12,51 @@
 
 #include "pipex.h"
 
-int	pipex(int *fd, char **cmds, char *envp[])
+void	child(char **argv, char **envp, int *fd)
 {
-	int		pip[2];
-	pid_t	sl1;
-	pid_t	sl2;
-	int		status;
-	int		res;
+	int		input;
 
-	res = 0;
-	pipe(pip);
-	sl1 = fork();
-	if (sl1 < 0)
-		error("ERROR Fork of slave 1", 1);
-	if (sl1 == 0)
-		ft_sl1(fd[0], cmds[0], pip, envp);
-	sl2 = fork();
-	if (sl2 < 0)
-		error("ERROR Fork of slave 2", 1);
-	if (sl2 == 0)
-		ft_sl2(fd[1], cmds[1], pip, envp);
-	close(pip[0]);
-	close(pip[1]);
-	while (wait(&status))
-		if (WIFEXITED(status))
-			res = WIFEXITED(status);
-	return (res);
+	input = open(argv[1], O_RDONLY, 0777);
+	if (input == -1)
+		error();
+	dup2(fd[1], STDOUT_FILENO);
+	dup2(input, STDIN_FILENO);
+	close(fd[0]);
+	execute(argv[2], envp);
 }
 
-void	ft_sl1(int fd, char *cmd1, int pip[2], char *envp[])
+void	parent(char **argv, char **envp, int *fd)
 {
-	char	**cmd;
-	char	*path;
+	int		out;
+	out = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
+	if (out == -1)
+		error();
+	dup2(fd[0], STDIN_FILENO);
+	dup2(out, STDOUT_FILENO);
+	close(fd[1]);
+	execute(argv[3], envp);
+}
 
-	if (fd < 0)
-		error("ERROR Can not read the input file\n", 1);
-	dup2(pip[1], STDOUT_FILENO);
-	close(pip[0]);
-	dup2(fd, STDIN_FILENO);
-	cmd = ft_split(cmd1, ' ');
-	path = get_path(cmd[0], envp);
-	if (execve(path, cmd, envp) == -1)
+int	main(int argc, char **argv, char **envp)
+{
+	int		fd[2];
+	pid_t	pid1;
+
+	if (argc == 5)
 	{
-		perror("Bad execve");
-		exit(127);
+		if (pipe(fd) == -1)
+			error();
+		pid1 = fork();
+		if (pid1 == -1)
+			error();
+		if (pid1 == 0)
+			child(argv, envp, fd);
+		waitpid(pid1, NULL, 0);
+		parent(argv, envp, fd);
 	}
-}
-
-void	ft_sl2(int fd, char *cmd2, int pip[2], char *envp[])
-{
-	char	**cmd;
-	char	*path;
-
-	if (fd < 0)
-		error ("Error: Can Not Read the Output File\n", 1);
-	dup2(pip[0], STDIN_FILENO);
-	close(pip[1]);
-	dup2(fd, STDOUT_FILENO);
-	cmd = ft_split(cmd2, ' ');
-	path = get_path(cmd[0], envp);
-	if (execve(path, cmd, envp) == -1)
-	{	
-		perror("Error Bad execve");
-		exit(127);
-	}
-}
-
-char	*get_path(char *cmd, char *envp[])
-{
-	char	**paths;
-	char	*goodpath;
-	int		i;
-	int		j;
-
-	i = 0;
-	j = 0;
-	if (cmd[0] == '/' && access(cmd, 0) == 0)
-		return (cmd);
-	while (envp[i] && ft_strncmp(envp[i], "PATH=", 5))
-		i++;
-	paths = ft_split(envp[i] + 5, ':');
-	cmd = ft_strjoin("/", cmd);
-	while (paths[j])
+	else
 	{
-		goodpath = ft_strjoin(paths[j], cmd);
-		if (access(goodpath, 0) == 0)
-			return (goodpath);
-		j++;
+		ft_putstr_fd("Error: Bad arguments", 2);
 	}
-	perror("ERROR: command not found");
-	exit(127);
+	return (0);
 }

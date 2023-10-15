@@ -3,101 +3,98 @@
 /*                                                        :::      ::::::::   */
 /*   split.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: papereir <papereir@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/13 15:39:42 by papereir          #+#    #+#             */
-/*   Updated: 2023/10/13 15:46:45 by papereir         ###   ########.fr       */
+/*   Created: 2023/10/15 14:00:24 by marvin            #+#    #+#             */
+/*   Updated: 2023/10/15 14:00:24 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static int	words(char const *s, char c)
+static char	**ft_malloc_error(char **tab)
 {
-	int	count;
-	int	i;
+	size_t	i;
 
 	i = 0;
-	count = 0;
-	while (s[i])
+	while (tab[i])
 	{
-		while (s[i] == c)
-			i++;
-		if (s[i] != c && s[i])
-			count++;
-		while (s[i] != c && s[i])
-			i++;
-	}
-	return (count);
-}
-
-static int	word_len(char const *s, char c)
-{
-	int	i;
-	int	count;
-
-	count = 0;
-	i = 0;
-	while (s[i] != c && s[i])
-	{
-		count++;
+		free(tab[i]);
 		i++;
 	}
-	return (count);
+	free(tab);
+	return (NULL);
 }
 
-static void	ft_free(int col, char **mat)
+static size_t	ft_nb_words(char const *s, char c)
 {
-	while (--col >= 0)
-		free(mat[col]);
-	free(mat);
-}
+	size_t	i;
+	size_t	nb_words;
 
-static char	**split_aux(char const *s, char c, char **mat, int len)
-{
-	int	j;
-	int	col;
-
-	col = 0;
-	while (*s && col < len)
+	if (!s[0])
+		return (0);
+	i = 0;
+	nb_words = 0;
+	while (s[i] && s[i] == c)
+		i++;
+	while (s[i])
 	{
-		while (*s == c)
-			s++;
-		if (*s != c && *s)
+		if (s[i] == c)
 		{
-			mat[col] = malloc(sizeof(char) * (word_len(s, c) + 1));
-			if (!mat[col])
-			{
-				ft_free(col, mat);
-				return (NULL);
-			}	
-			j = 0;
-			while (*s != c && *s)
-				mat[col][j++] = *s++;
-			mat[col][j] = 0;
-			col++;
+			nb_words++;
+			while (s[i] && s[i] == c)
+				i++;
+			continue ;
 		}
+		i++;
 	}
-	mat[col] = NULL;
-	return (mat);
+	if (s[i - 1] != c)
+		nb_words++;
+	return (nb_words);
+}
+
+static void	ft_get_next_word(char **next_word, size_t *next_word_len, char c)
+{
+	size_t	i;
+
+	*next_word += *next_word_len;
+	*next_word_len = 0;
+	i = 0;
+	while (**next_word && **next_word == c)
+		(*next_word)++;
+	while ((*next_word)[i])
+	{
+		if ((*next_word)[i] == c)
+			return ;
+		(*next_word_len)++;
+		i++;
+	}
 }
 
 char	**ft_split(char const *s, char c)
 {
-	int		len;
-	char	**mat;
+	char	**tab;
+	char	*next_word;
+	size_t	next_word_len;
+	size_t	i;
 
 	if (!s)
 		return (NULL);
-	if (!*s)
-	{
-		mat = malloc(sizeof(char *));
-		mat[0] = NULL;
-		return (mat);
-	}
-	len = words(s, c);
-	mat = malloc(sizeof(char *) * (len + 1));
-	if (!mat)
+	tab = (char **)malloc(sizeof(char *) * (ft_nb_words(s, c) + 1));
+	if (!tab)
 		return (NULL);
-	return (split_aux(s, c, mat, len));
+	i = 0;
+	next_word = (char *)s;
+	next_word_len = 0;
+	while (i < ft_nb_words(s, c))
+	{
+		ft_get_next_word(&next_word, &next_word_len, c);
+		tab[i] = (char *)malloc(sizeof(char) * (next_word_len + 1));
+		if (!tab[i])
+			return (ft_malloc_error(tab));
+		ft_strlcpy(tab[i], next_word, next_word_len + 1);
+		i++;
+	}
+	tab[i] = NULL;
+	return (tab);
 }

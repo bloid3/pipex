@@ -12,58 +12,84 @@
 
 #include "pipex.h"
 
-int	ft_strncmp(const char *s1, const char *s2, size_t n)
+char	*find_path(char *cmd, char **envp)
 {
-	int	i;
+	char	**paths;
+	char	*path;
+	int		i;
+	char	*part_path;
 
 	i = 0;
-	while ((s1[i] != '\0' || s2[i] != '\0') && n > 0)
+	while (ft_strnstr(envp[i], "PATH", 4) == 0)
+		i++;
+	paths = ft_split(envp[i] + 5, ':');
+	i = 0;
+	while (paths[i])
 	{
-		if (s1[i] == s2[i])
-			i++;
-		else
-			return ((unsigned char)s1[i] - (unsigned char)s2[i]);
-		n--;
-	}	
+		part_path = ft_strjoin(paths[i], "/");
+		path = ft_strjoin(part_path, cmd);
+		free(part_path);
+		if (access(path, F_OK) == 0)
+			return (path);
+		free(path);
+		i++;
+	}
+	i = -1;
+	while (paths[++i])
+		free(paths[i]);
+	free(paths);
 	return (0);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+void	error(void)
 {
-	char	*str;
-	int		len1;
-	int		len2;
-	int		i;
-	int		j;
-
-	if (!s1 || !s2)
-		return (NULL);
-	len1 = ft_strlen(s1);
-	len2 = ft_strlen(s2);
-	i = 0;
-	j = 0;
-	str = malloc(sizeof(char) * (len1 + len2 + 1));
-	if (!str)
-		return (NULL);
-	while (i < len1)
-	{
-		str[i] = s1[i];
-		i++;
-	}
-	while (i <= len1 + len2)
-		str[i++] = s2[j++];
-	return (str);
+	perror("Error");
+	exit(EXIT_FAILURE);
 }
 
-size_t	ft_strlen(const char *str)
+void	execute(char *argv, char **envp)
 {
-	int	count;
-
-	count = 0;
-	while (*str)
+	char	**cmd;
+	int 	i;
+	char	*path;
+	
+	i = -1;
+	cmd = ft_split(argv, ' ');
+	path = find_path(cmd[0], envp);
+	if (!path)	
 	{
-		count++;
-		str++;
+		while (cmd[++i])
+			free(cmd[i]);
+		free(cmd);
+		error();
 	}
-	return (count);
+	if (execve(path, cmd, envp) == -1)
+		error();
+}
+
+int	get_next_line(char **line)
+{
+	char	*buffer;
+	int		i;
+	int		r;
+	char	c;
+
+	i = 0;
+	r = 0;
+	buffer = (char *)malloc(10000);
+	if (!buffer)
+		return (-1);
+	r = read(0, &c, 1);
+	while (r && c != '\n' && c != '\0')
+	{
+		if (c != '\n' && c != '\0')
+			buffer[i] = c;
+		i++;
+		r = read(0, &c, 1);
+	}
+	buffer[i] = '\n';
+	buffer[++i] = '\0';
+	*line = buffer;
+	free(buffer);
+	return (r);
 }

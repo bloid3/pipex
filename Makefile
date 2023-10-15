@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-SRCS	=	main.c pipex.c split.c utils.c error.c
+SRCS	=	pipex.c utils.c functions.c split.c
 
 OBJS	= ${SRCS:.c=.o}
 

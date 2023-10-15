@@ -18,14 +18,17 @@
 # include <fcntl.h>
 # include <sys/types.h>
 
-int		pipex(int *fd, char **cmds, char *envp[]);
-void	ft_sl1(int fd, char *cmd1, int pip[2], char *envp[]);
-void	ft_sl2(int fd, char *cmd2, int pip[2], char *envp[]);
-char	*get_path(char *cmd, char *envp[]);
-void	error(char *err, int e);
-int		ft_strncmp(const char *s1, const char *s2, size_t n);
-char	**ft_split(char const *s, char c);
-char	*ft_strjoin(char const *s1, char const *s2);
-size_t	ft_strlen(const char *str);
-void	ft_putstr_fd(char *s, int fd);
+void			error(void);
+void			child(char **argv, char **envp, int *fd);
+void			parent(char **argv, char **envp, int *fd);
+char			*find_path(char *cmd, char **envp);
+void			execute(char *argv, char **envp);
+int				get_next_line(char **line);
+char			*ft_strnstr(const char	*big, const char *little, size_t len);
+static char		**ft_malloc_error(char **tab);
+static size_t	ft_nb_words(char const *s, char c);
+static void		ft_get_next_word(char **next_word, size_t *next_word_len, char c);
+char			**ft_split(char const *s, char c);
+char		*ft_strjoin(char const *s1, char const *s2);
+
 #endif
