@@ -67,6 +67,6 @@ int	main(int argc, char **argv, char **envp)
 	if (!envp || !*envp || argc != 5)
 		error();
 	fd[0] = open(argv[1], O_RDONLY);
-	fd[1] = open(argv[4], O_CREAT | O_RDWR | O_TRUNC);
+	fd[1] = open(argv[4], O_CREAT | O_RDWR | O_TRUNC, 0777);
 	return (pipex(fd, argv, envp));
 }
