@@ -12,6 +12,21 @@
 
 #include "pipex.h"
 
+void	ft_free_array(char **array)
+{
+	int	i;
+
+	if (!array)
+		return ;
+	i = 0;
+	while (array[i])
+	{
+		free(array[i]);
+		i++;
+	}
+	free(array);
+}
+
 char	*find_path(char *cmd, char **envp)
 {
 	char	**paths;
@@ -21,12 +36,12 @@ char	*find_path(char *cmd, char **envp)
 
 	i = 0;
 	if (access(cmd, F_OK) == 0)
-			return (cmd);
+		return (cmd);
 	while (ft_strnstr(envp[i], "PATH", 4) == 0)
 		i++;
 	paths = ft_split(envp[i] + 5, ':');
-	i = 0;
-	while (paths[i])
+	i = -1;
+	while (paths[++i])
 	{
 		part_path = ft_strjoin(paths[i], "/");
 		path = ft_strjoin(part_path, cmd);
@@ -34,18 +49,14 @@ char	*find_path(char *cmd, char **envp)
 		if (access(path, F_OK) == 0)
 			return (path);
 		free(path);
-		i++;
 	}
-	i = -1;
-	while (paths[++i])
-		free(paths[i]);
-	free(paths);
-	return (0);
+	ft_free_array(paths);
+	return (NULL);
 }
 
-void	error(void)
+void	error(char *message)
 {
-	perror("Error");
+	perror(message);
 	exit(EXIT_FAILURE);
 }
 
@@ -63,10 +74,10 @@ void	execute(char *argv, char **envp)
 		while (cmd[++i])
 			free(cmd[i]);
 		free(cmd);
-		error();
+		error("Command not found");
 	}
 	if (execve(path, cmd, envp) == -1)
-		error();
+		error("Error executing command");
 }
 
 size_t	ft_strlcpy(char *dst, const char *src, size_t size)

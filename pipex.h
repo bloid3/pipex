@@ -19,7 +19,7 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 
-void	error(void);
+void	error(char *message);
 void	child(char **argv, char **envp, int *fd);
 void	parent(char **argv, char **envp, int *fd);
 char	*find_path(char *cmd, char **envp);
@@ -34,5 +34,6 @@ void	ft_putstr_fd(char *s, int fd);
 void	ft_putchar_fd(char c, int fd);
 size_t	ft_strlen(const char *s);
 size_t	ft_strlcpy(char *dst, const char *src, size_t size);
+void	ft_free_array(char **array);
 
 #endif

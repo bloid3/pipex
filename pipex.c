@@ -18,7 +18,7 @@ void	child(char **argv, char **envp, int *fd)
 
 	input = open(argv[1], O_RDONLY, 0777);
 	if (input == -1)
-		error();
+		error("Error opening input file");
 	dup2(fd[1], STDOUT_FILENO);
 	dup2(input, STDIN_FILENO);
 	close(fd[0]);
@@ -31,7 +31,7 @@ void	parent(char **argv, char **envp, int *fd)
 
 	out = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (out == -1)
-		error();
+		error("Error opening output fie");
 	dup2(fd[0], STDIN_FILENO);
 	dup2(out, STDOUT_FILENO);
 	close(fd[1]);
@@ -45,10 +45,10 @@ int	pipex(int *fd, char **argv, char **enpv)
 	int		res;
 
 	if (pipe(fd) == -1)
-		error();
+		error("Error creating pipe");
 	pid1 = fork();
 	if (pid1 == -1)
-		error();
+		error("file not found");
 	if (pid1 == 0)
 		child(argv, enpv, fd);
 	parent(argv, enpv, fd);
@@ -65,8 +65,10 @@ int	main(int argc, char **argv, char **envp)
 	int		fd[2];
 
 	if (!envp || !*envp || argc != 5)
-		error();
+		error("Invalid number of arguments");
 	fd[0] = open(argv[1], O_RDONLY);
 	fd[1] = open(argv[4], O_CREAT | O_RDWR | O_TRUNC, 0777);
+	if (fd[0] == -1 || fd[1] == -1)
+		error("Error opening file descriptors");
 	return (pipex(fd, argv, envp));
 }
