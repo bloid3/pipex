@@ -70,7 +70,9 @@ int	main(int argc, char **argv, char **envp)
 {
 	int		fd[2];
 
-	if (!envp || !*envp || argc != 5)
+	if (!envp || !*envp)
+		error("Environment variables not found");
+	if (argc != 5)
 		error("Invalid number of arguments");
 	fd[0] = open(argv[1], O_RDONLY);
 	fd[1] = open(argv[4], O_CREAT | O_RDWR | O_TRUNC, 0777);
