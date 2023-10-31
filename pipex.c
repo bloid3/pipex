@@ -12,6 +12,12 @@
 
 #include "pipex.h"
 
+void	ft_putendl_fd(char *s, int fd)
+{
+	ft_putstr_fd(s, fd);
+	ft_putchar_fd('\n', fd);
+}
+
 void	child(char **argv, char **envp, int *fd)
 {
 	int		input;
@@ -31,7 +37,7 @@ void	parent(char **argv, char **envp, int *fd)
 
 	out = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0777);
 	if (out == -1)
-		error("Error opening output fie");
+		error("Error opening output file");
 	dup2(fd[0], STDIN_FILENO);
 	dup2(out, STDOUT_FILENO);
 	close(fd[1]);

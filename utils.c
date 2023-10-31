@@ -56,7 +56,7 @@ char	*find_path(char *cmd, char **envp)
 
 void	error(char *message)
 {
-	perror(message);
+	ft_putendl_fd(message, 2);
 	exit(EXIT_FAILURE);
 }
 

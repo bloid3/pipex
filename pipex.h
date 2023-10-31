@@ -20,6 +20,7 @@
 # include <sys/wait.h>
 
 void	error(char *message);
+void	ft_putendl_fd(char *s, int fd);
 void	child(char **argv, char **envp, int *fd);
 void	parent(char **argv, char **envp, int *fd);
 char	*find_path(char *cmd, char **envp);
