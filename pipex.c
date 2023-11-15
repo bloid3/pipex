@@ -24,7 +24,7 @@ void	child(char **argv, char **envp, int *fd)
 
 	input = open(argv[1], O_RDONLY, 0777);
 	if (input == -1)
-		error("Error opening input file");
+		error("No such file or directory");
 	dup2(fd[1], STDOUT_FILENO);
 	dup2(input, STDIN_FILENO);
 	close(fd[0]);

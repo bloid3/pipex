@@ -37,10 +37,10 @@ char	*find_path(char *cmd, char **envp)
 	i = 0;
 	if (access(cmd, F_OK) == 0)
 		return (cmd);
-	while (ft_strnstr(envp[i], "PATH", 4) == 0)
+	while (envp[i] != NULL && ft_strnstr(envp[i], "PATH", 4) == NULL)
 		i++;
 	if (!envp[i])
-		error("PATH variable not found"); 
+		error("PATH variable not found");
 	paths = ft_split(envp[i] + 5, ':');
 	i = -1;
 	while (paths[++i])
